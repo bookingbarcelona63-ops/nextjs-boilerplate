@@ -20,7 +20,7 @@
     "autoprefixer": "latest",
     "postcss": "latest",
     "tailwindcss": "latest",
-    "@tailwindcss/postcss": "latest",   // ← añade esta línea
+    "@tailwindcss/postcss": "latest",   
     "typescript": "latest"
   }
 }
