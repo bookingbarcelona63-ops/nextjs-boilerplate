@@ -83,6 +83,100 @@ export default function Page() {
               <div className="border rounded-xl p-4 bg-white/80">
                 <div className="text-[11px] uppercase text-slate-500">{t.dates}</div>
                 <div className="mt-2 grid grid-cols-2 gap-2">
-                  <label className="text-xs text-slate-600">{t.fr
+                  <label className="text-xs text-slate-600">{t.from}
+                    <input type="date" className="mt-1 w-full border rounded-md px-2 py-1" value={from} onChange={e=>setFrom(e.target.value)}/>
+                  </label>
+                  <label className="text-xs text-slate-600">{t.to}
+                    <input type="date" className="mt-1 w-full border rounded-md px-2 py-1" value={to} onChange={e=>setTo(e.target.value)}/>
+                  </label>
+                </div>
+              </div>
 
+              <div className="border rounded-xl p-4 bg-white/80">
+                <div className="text-[11px] uppercase text-slate-500">{t.guests}</div>
+                <div className="mt-2 grid grid-cols-2 gap-3">
+                  <label className="text-xs text-slate-600">{t.adults}
+                    <select className="mt-1 w-full border rounded-md px-2 py-1" value={adults} onChange={e=>setAdults(parseInt(e.target.value))}>
+                      {[1,2,3,4].map(n=><option key={n} value={n}>{n}</option>)}
+                    </select>
+                  </label>
+                  <label className="text-xs text-slate-600">{t.children}
+                    <select className="mt-1 w-full border rounded-md px-2 py-1" value={children} onChange={e=>setChildren(parseInt(e.target.value))}>
+                      {[0,1,2,3].map(n=><option key={n} value={n}>{n}</option>)}
+                    </select>
+                  </label>
+                </div>
+              </div>
+
+              <div className="border rounded-xl p-4 bg-white/80">
+                <div className="text-[11px] uppercase text-slate-500">{t.pickApartment}</div>
+                <select className="mt-2 w-full border rounded-md px-2 py-2" value={aptId} onChange={e=>setAptId(e.target.value)}>
+                  {filtered.map(a=><option key={a.id} value={a.id}>{lang==='es'?a.title:a.title_en}</option>)}
+                </select>
+                <div className="text-xs text-slate-500 mt-2">{nights>0?`${nights} ${t.nights(nights)}`:''}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border rounded-2xl overflow-hidden bg-white">
+            <div className="p-4 font-semibold">📍 {t.location}</div>
+            <div className="aspect-[16/12] w-full">
+              <iframe title="map" className="w-full h-full border-0"
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${apt.coords.lon-0.01}%2C${apt.coords.lat-0.01}%2C${apt.coords.lon+0.01}%2C${apt.coords.lat+0.01}&layer=mapnik&marker=${apt.coords.lat}%2C${apt.coords.lon}`}
+                loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+            </div>
+            <div className="p-3 text-xs text-slate-600 flex items-center justify-between">
+              <span>{t.location}</span>
+              <a className="underline" href={`https://www.openstreetmap.org/?mlat=${apt.coords.lat}&mlon=${apt.coords.lon}#map=16/${apt.coords.lat}/${apt.coords.lon}`} target="_blank" rel="noreferrer">
+                {t.seeOnOSM}
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filtered.map(a=>(
+            <div key={a.id} className={`rounded-2xl border overflow-hidden ${aptId===a.id?'ring-2 ring-slate-900':''}`}>
+              <div className="aspect-[16/9] w-full bg-cover bg-center" style={{backgroundImage:`url(${a.images[0]})`}}/>
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium">{lang==='es'?a.title:a.title_en}</div>
+                  <div className="text-sm bg-slate-100 rounded px-2 py-1">{fmt.format(a.nightly)} {t.perNight}</div>
+                </div>
+                <div className="mt-2 text-sm text-slate-600">{a.bedrooms} BR · {t.max(a.capacity)}</div>
+                <div className="mt-3 flex gap-2">
+                  <button className={`px-3 py-2 rounded-md border ${aptId===a.id?'bg-black text-white':'bg-white hover:bg-slate-50'}`} onClick={()=>setAptId(a.id)}>
+                    {lang==='es'?'Elegir':'Choose'}
+                  </button>
+                  <a className="text-sm underline" href={`https://www.openstreetmap.org/?mlat=${a.coords.lat}&mlon=${a.coords.lon}#map=16/${a.coords.lat}/${a.coords.lon}`} target="_blank" rel="noreferrer">
+                    {t.seeOnOSM}
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </section>
+
+        <section className="mt-10 border rounded-2xl p-5 bg-white">
+          <div className="font-semibold mb-2">{lang==='es'?'Desglose de precio':'Price breakdown'}</div>
+          <div className="text-sm flex justify-between"><span>{fmt.format(apt.nightly)} × {t.nights(nights)}</span><span>{fmt.format(nights*apt.nightly)}</span></div>
+          <div className="text-sm flex justify-between"><span>{lang==='es'?'Limpieza':'Cleaning'}</span><span>{fmt.format(apt.cleaningFee)}</span></div>
+          <div className="mt-2 border-t pt-2 font-semibold flex justify-between"><span>Total</span><span>{fmt.format(totalBase)}</span></div>
+          <div className="mt-3"><button className="px-4 py-2 rounded-md bg-black text-white">{t.book}</button></div>
+        </section>
+
+        <footer className="mt-12 border-t pt-6 pb-10 text-xs text-slate-500">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+            <div>© {new Date().getFullYear()} letsgobarcelona.com</div>
+            <div className="flex gap-4">
+              <a href="#" className="hover:underline">{lang==='es'?'Aviso legal':'Legal'}</a>
+              <a href="#" className="hover:underline">{lang==='es'?'Privacidad':'Privacy'}</a>
+              <a href="#" className="hover:underline">Cookies</a>
+            </div>
+          </div>
+        </footer>
+      </main>
+    </div>
+  );
 }
+
