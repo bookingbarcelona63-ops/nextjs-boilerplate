@@ -9,13 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@radix-ui/react-badge": "latest",
-    "@radix-ui/react-calendar": "latest",
-    "@radix-ui/react-card": "latest",
-    "@radix-ui/react-label": "latest",
-    "@radix-ui/react-popover": "latest",
-    "@radix-ui/react-select": "latest",
-    "@radix-ui/react-switch": "latest",
     "date-fns": "latest",
     "framer-motion": "latest",
     "lucide-react": "latest",
